@@ -17,27 +17,27 @@ const router=createBrowserRouter([
     children:[
       {
         index:true,
-        Component:Home
+        element:<Home/>
       },
       {
         path:"about",
-        Component:About
+        element:<About/>
       },
       {
         path:"dashboard",
-        Component:Dashboard
+        element:<Dashboard/>
       },
       {
         path:"projects",
-        Component:Projects
+        element:<Projects/>
       },
       {
         path:"sign-up",
-        Component:SignUp
+        element:<SignUp/>
       },
       {
         path:"sign-in",
-        Component:SignIn
+        element:<SignIn/>
       }
     ]
   }
