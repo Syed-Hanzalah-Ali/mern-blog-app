@@ -31,7 +31,7 @@ export default function Header() {
                        '       
             to="/">
                 <span
-                className='bg-gradient-to-r from-lime-500 to-blue-500 px-2 py-1
+                className='bg-gradient-to-r from-green-700 to-blue-500 px-2 py-1
                             rounded-lg text-white'       
                 >MERN</span>
                 Blog
@@ -53,7 +53,7 @@ export default function Header() {
                 </Button>
 
                 <Link to="/sign-in">
-                    <Button className='bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500'>
+                    <Button className="bg-gradient-to-br from-green-400 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
                         Sign In
                     </Button>
                 </Link>
