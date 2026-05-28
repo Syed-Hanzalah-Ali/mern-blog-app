@@ -7,7 +7,7 @@ export const signup=asyncHandler(async(req,res)=>{
 
     const{username,email,password}=req.body;
 
-    if([username,email,password].some((field)=>!field.trim())){
+    if([username,email,password].some((field)=>{return !field})){
         throw new ApiError(400,"All fields are required");
     }
 

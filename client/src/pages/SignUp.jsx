@@ -1,8 +1,58 @@
-import { Button, Label, TextInput } from 'flowbite-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
+import React, { useState } from 'react'
+import { Link,useNavigate } from 'react-router-dom'
+import {HiInformationCircle} from "react-icons/hi"
 
 export default function SignUp() {
+
+  const [formData,setFormData]=useState({})
+  const [loading,setLoading]=useState(false)
+  const [errorMessage,setErrorMessage]=useState(null)
+
+  const navigate=useNavigate()
+
+  function handleChange(e){
+    // console.log(e.target);
+    
+    setFormData({...formData,[e.target.id]:e.target.value.trim()})
+  }
+  // console.log(formData);
+
+  async function handleSubmit(e){
+    console.log(formData);
+    
+    e.preventDefault()
+
+    try {
+      setLoading(true)
+      setErrorMessage(null)  // remove the previous error
+      const response=await fetch('/api/v1/auth/signup',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(formData)
+      })
+      const data=await response.json()
+      console.log(data);
+      if(data.success===false){
+        // console.log("y",errorMessage);
+        setLoading(false)
+        setErrorMessage(data.message)
+        return; 
+      }
+      setLoading(false)
+      navigate('/sign-in')
+      
+    } catch (error) {
+      setErrorMessage(data.message)
+      setLoading(false)
+    }
+    
+  }
+  console.log(errorMessage);
+  
+  
   return (
     <div className='min-h-screen mt-20'>
       
@@ -29,14 +79,14 @@ export default function SignUp() {
         {/* right */}
         <div className='flex-1'>
 
-          <form className='flex flex-col gap-4'>
+          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label>Your username</Label>
 
               <TextInput
                 type='text'
                 placeholder='username'
-                id='username'
+                id='username' onChange={handleChange}
               />
             </div>
 
@@ -46,7 +96,7 @@ export default function SignUp() {
               <TextInput
                 type='email'
                 placeholder='name@company.com'
-                id='email'
+                id='email' onChange={handleChange}
               />
             </div>
 
@@ -56,12 +106,21 @@ export default function SignUp() {
               <TextInput
                 type='password'
                 placeholder='password'
-                id='password'
+                id='password' onChange={handleChange}
               />
             </div>
 
             <Button type='submit' className="bg-gradient-to-br from-green-600 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
-                Sign Up
+                {
+                  loading?(
+                  <>
+                    <Spinner size="sm" aria-label="Info spinner example" className="me-3" light/>
+                      <span className='pl-3'>Loading...</span>
+                    
+                  </>
+                  )
+                  :'Sign Up'
+                }
             </Button>
           </form>
 
@@ -71,6 +130,13 @@ export default function SignUp() {
               Sign In
             </Link>
           </div>
+          {
+            errorMessage&&(
+              <Alert color='failure' className='mt-5' icon={HiInformationCircle}>
+                {errorMessage}
+              </Alert>
+            )
+          }
         </div>
       </div>
     </div>
