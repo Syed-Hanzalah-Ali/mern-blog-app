@@ -8,6 +8,7 @@ export const asyncHandler=(func)=>{
             
             res.status(error.statusCode||500).json({
                 success:false,
+                statusCode:error.statusCode,
                 message:error.message
             })
         }

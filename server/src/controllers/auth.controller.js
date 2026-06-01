@@ -31,3 +31,37 @@ export const signup=asyncHandler(async(req,res)=>{
         new ApiResponse(200,newUser,"User created successfully")
     )
 })
+
+export const signin=asyncHandler(async(req,res)=>{
+    const {email,password}=req.body;
+
+    if(!(email.trim() && password.trim())){
+        throw new ApiError(400,"Email and password are required")
+    }
+
+    const existedUser=await User.findOne({email}).select("+password");
+
+    if(!existedUser){
+        throw new ApiError(404,"User not found")
+    }
+
+    const isAuthenticate=await existedUser.isPasswordCorrect(password)
+
+    if(!isAuthenticate){
+        throw new ApiError(400,"Wrong credentials")
+    }
+
+    const cookieOption={
+        httpOnly:true,
+        secure:true
+    }
+
+    const accessToken=existedUser.generateAccessToken()
+
+    existedUser.password=undefined
+
+    return res.cookie("accessToken",accessToken,cookieOption).status(200)
+    .json(
+        new ApiResponse(200,existedUser,"User logged in successfully")
+    )
+})
