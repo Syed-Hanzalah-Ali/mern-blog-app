@@ -10,6 +10,9 @@ import SignIn from './pages/SignIn.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Projects from './pages/Projects.jsx'
 
+import { store } from './redux/store.js'
+import {Provider} from "react-redux"
+
 const router=createBrowserRouter([
   {
     path:"/",
@@ -45,5 +48,9 @@ const router=createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}/>
+
+  <Provider store={store}>
+    <RouterProvider router={router}/>
+
+  </Provider>
 )

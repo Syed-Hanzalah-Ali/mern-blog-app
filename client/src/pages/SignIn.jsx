@@ -3,13 +3,19 @@ import { useNavigate, Link } from 'react-router-dom'
 import {Label, TextInput, Button, Spinner, Alert} from "flowbite-react"
 import {HiInformationCircle} from "react-icons/hi"
 
+import { useSelector,useDispatch } from 'react-redux'
+import {signinStart,signInSuccess,signInFailure} from "../redux/user/userSlice.js" 
+
 
 export default function SignIn() {
   const [formData,setFormData]=useState({})
-    const [loading,setLoading]=useState(false)
-    const [errorMessage,setErrorMessage]=useState(null)
+  //   const [loading,setLoading]=useState(false)
+  //   const [errorMessage,setErrorMessage]=useState(null)
   
     const navigate=useNavigate()
+
+    const dispatch=useDispatch()
+    const {loading,error:errorMessage}=useSelector((state)=>state.user)
   
     function handleChange(e){
       // console.log(e.target);
@@ -24,8 +30,10 @@ export default function SignIn() {
       e.preventDefault()
   
       try {
-        setLoading(true)
-        setErrorMessage(null)  // remove the previous error
+        // setLoading(true)
+        // setErrorMessage(null)  // remove the previous error
+        dispatch(signinStart())
+
         const response=await fetch('/api/v1/auth/signin',{
           method:'POST',
           headers:{
@@ -33,24 +41,27 @@ export default function SignIn() {
           },
           body:JSON.stringify(formData)
         })
+
         const data=await response.json()
         console.log(data);
         if(data.success===false){
-          // console.log("y",errorMessage);
-          setLoading(false)
-          setErrorMessage(data.message)
+          // setLoading(false)
+          // setErrorMessage(data.message)
+          dispatch(signInFailure(data.message))
           return; 
         }
-        setLoading(false)
+        // setLoading(false)
+        dispatch(signInSuccess(data.data))
         navigate('/')
         
       } catch (error) {
-        setErrorMessage(data.message)
-        setLoading(false)
+        // setErrorMessage(data.message)
+        // setLoading(false)
+        dispatch(signInFailure(data.message))
       }
       
     }
-    console.log(errorMessage);
+    // console.log(errorMessage);
     
     
     return (
