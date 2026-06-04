@@ -65,3 +65,47 @@ export const signin=asyncHandler(async(req,res)=>{
         new ApiResponse(200,existedUser,"User logged in successfully")
     )
 })
+
+export const google=asyncHandler(async(req,res)=>{
+    const {name,email,photoURL}=req.body;
+    console.log(name);
+    
+    const cookieOptions={
+        httpOnly:true,
+        secure:true
+    }
+
+    // check whether user already signIn before or not
+    const existedUser=await User.findOne({email})
+    if(existedUser){
+        console.log("user already exist");
+        
+        const token=existedUser.generateAccessToken();
+        
+        return res.status(200).cookie("accessToken",token,cookieOptions)
+        .json(new ApiResponse(200,existedUser,"user successfully signIn with google"))
+    }
+
+    else{
+        const generatePassword=Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8)
+
+        const newUser=await User.create({
+            username:name.replace(" ","")+Math.random().toString(9).slice(-5),
+            email,
+            password:generatePassword,
+            profilePicture:photoURL
+        })
+        
+        if(!newUser){
+            throw new ApiError(500,"something went wrong while signIn with google")
+        }
+        const token=newUser.generateAccessToken()
+
+        newUser.password=undefined
+
+        return res.status(200).cookie("accessToken",token,cookieOptions)
+        .json(new ApiResponse(200,newUser,"user successfully signIn with google"))
+    }
+
+
+})

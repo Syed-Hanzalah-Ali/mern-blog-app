@@ -5,6 +5,7 @@ import {HiInformationCircle} from "react-icons/hi"
 
 import { useSelector,useDispatch } from 'react-redux'
 import {signinStart,signInSuccess,signInFailure} from "../redux/user/userSlice.js" 
+import OAuth from '../components/OAuth.jsx'
 
 
 export default function SignIn() {
@@ -124,6 +125,10 @@ export default function SignIn() {
                     :'Sign In'
                   }
               </Button>
+
+              {/* google auth */}
+              <OAuth/>
+              
             </form>
   
             <div className='flex gap-2 text-sm mt-5'>
