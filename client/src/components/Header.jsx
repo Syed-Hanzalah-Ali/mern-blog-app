@@ -1,27 +1,23 @@
 import React from 'react'
-import {Button, createTheme, Navbar, NavbarCollapse, NavbarLink, NavbarToggle, TextInput, ThemeProvider} from "flowbite-react"
+import {Avatar, Button, createTheme, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, NavbarCollapse, NavbarLink, NavbarToggle, TextInput, ThemeProvider} from "flowbite-react"
 import { Link, useLocation } from 'react-router-dom'
 import {AiOutlineSearch} from "react-icons/ai"
 import {FaMoon} from "react-icons/fa"
+import {useSelector} from "react-redux" 
+import {HiViewGrid,HiLogout} from "react-icons/hi"
 
-// const customTheme=createTheme({
-//     link: {
-//         base: "block py-2 pl-3 pr-4 md:p-0",
-//         active: {
-//             on: "bg-primary-700 text-white md:bg-transparent md:text-blue-700 dark:text-blue",
-//             off: "border-b border-gray-100 text-gray-700 hover:bg-gray-50 md:border-0 md:hover:bg-transparent md:hover:text-primary-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent md:dark:hover:text-white"
-//         },
-//         disabled: {
-//             on: "text-gray-400 hover:cursor-not-allowed dark:text-gray-600",
-//             off: ""
-//         }
-//   }
-// })
 
 export default function Header() {
 
     const path=useLocation().pathname;
     // console.log(path);
+
+    const {currentUser}=useSelector((state)=>state.user)
+    console.log("user data: ",currentUser);
+    if(!currentUser){
+        console.log("no user");
+        
+    }
     
   return (
     <div>
@@ -52,11 +48,36 @@ export default function Header() {
                     <FaMoon/>
                 </Button>
 
-                <Link to="/sign-in">
-                    <Button className="bg-gradient-to-br from-green-400 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
-                        Sign In
-                    </Button>
-                </Link>
+                {
+                    currentUser?(
+                        <Dropdown arrowIcon={false} inline 
+                            label={
+                                <Avatar img={currentUser.profilePicture} alt='user' rounded/>
+                            }
+                        >
+                            <DropdownHeader>
+                                <span className='block text-sm'>@{currentUser.username}</span>
+                                <span className="block truncate text-sm font-medium">{currentUser.email}</span>
+                            </DropdownHeader>
+
+                            <Link to="/dashboard?tab=profile">
+                                <DropdownItem icon={HiViewGrid}>Profile</DropdownItem>
+                            </Link>
+
+                            <DropdownDivider />
+                            <DropdownItem icon={HiLogout}>Sign out</DropdownItem>
+
+                        </Dropdown>
+                    ):
+                    (
+                    <Link to="/sign-in">
+                        <Button className="bg-gradient-to-br from-green-400 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
+                            Sign In
+                        </Button>
+                    </Link>
+
+                    )
+                }
             </div>
 
             <NavbarToggle />
