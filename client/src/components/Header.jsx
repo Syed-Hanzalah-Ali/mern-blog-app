@@ -2,22 +2,22 @@ import React from 'react'
 import {Avatar, Button, createTheme, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, NavbarCollapse, NavbarLink, NavbarToggle, TextInput, ThemeProvider} from "flowbite-react"
 import { Link, useLocation } from 'react-router-dom'
 import {AiOutlineSearch} from "react-icons/ai"
-import {FaMoon} from "react-icons/fa"
-import {useSelector} from "react-redux" 
+import {FaMoon, FaSun} from "react-icons/fa"
+import {useDispatch, useSelector} from "react-redux" 
 import {HiViewGrid,HiLogout} from "react-icons/hi"
+import { toogleTheme } from '../redux/theme/themeSlice.js'
 
 
 export default function Header() {
 
     const path=useLocation().pathname;
     // console.log(path);
+    const dispatch=useDispatch()
+    const {theme}=useSelector((state)=>state.theme)
 
     const {currentUser}=useSelector((state)=>state.user)
     console.log("user data: ",currentUser);
-    if(!currentUser){
-        console.log("no user");
-        
-    }
+    
     
   return (
     <div>
@@ -44,8 +44,10 @@ export default function Header() {
             </Button>
 
             <div className='flex gap-2 md:order-2' >
-                <Button className='w-12 h-10 hidden sm:inline p-0' color="light" pill>
-                    <FaMoon/>
+                <Button onClick={()=>dispatch(toogleTheme())} className='' color="light" pill>
+                    {
+                        theme==="light"?(<FaMoon/>):(<FaSun/>)
+                    }
                 </Button>
 
                 {
