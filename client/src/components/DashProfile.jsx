@@ -1,10 +1,33 @@
-import { Button, TextInput } from 'flowbite-react';
-import React from 'react'
+import { Alert, Button, TextInput } from 'flowbite-react';
+import React, { useRef, useState } from 'react'
 import {useSelector} from "react-redux"
+import {HiInformationCircle} from "react-icons/hi"
+
 export default function DashProfile() {
 
   const {currentUser}=useSelector((state)=>state.user)
-  console.log(currentUser);
+  // console.log(currentUser);
+
+  const [imageFile,setImageFile]=useState(null)
+  const [imageURL,setImageURL]=useState(null)
+
+  const fileRef=useRef(null)
+  // console.log(ref);
+
+  function handleImage(e){
+    const file=e.target.files[0]
+    // console.log(file);
+
+    if(file){
+      setImageFile(file)
+      setImageURL(URL.createObjectURL(file))
+      
+    }
+    
+  }
+  // console.log(imageFile);
+  // console.log(imageFile,"    ",imageURL);
+  
   
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -12,11 +35,20 @@ export default function DashProfile() {
 
       <form className='flex flex-col gap-4'>
 
-        <div className='w-32 h-32 self-center cursor-pointer overflow-hidden rounded-full'>
-          <img src={currentUser.profilePicture} alt="profilePicture" 
+        <input hidden type="file" accept='image/*' ref={fileRef} onChange={handleImage}/>
+
+        <div className='w-32 h-32 self-center cursor-pointer overflow-hidden rounded-full' onClick={()=>fileRef.current.click()}>
+          <img src={imageURL || currentUser.profilePicture} alt="profilePicture" 
           className='rounded-full w-full h-full object-cover'/>
 
         </div>
+
+        {
+          imageFile?.size>16777216&&(
+          <Alert color='failure' className='mt-5' icon={HiInformationCircle}>
+            image is larger than 2KB
+          </Alert>)
+        }
 
         <TextInput
         type='text'
