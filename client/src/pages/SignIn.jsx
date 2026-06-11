@@ -58,7 +58,7 @@ export default function SignIn() {
       } catch (error) {
         // setErrorMessage(data.message)
         // setLoading(false)
-        dispatch(signInFailure(data.message))
+        dispatch(signInFailure(error.message))
       }
       
     }

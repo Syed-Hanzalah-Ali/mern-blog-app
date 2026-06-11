@@ -9,5 +9,5 @@ router.use(verifyJWT)
 
 router.route("/test").get(test)
 
-router.route("/update/:userId").patch(upload.single('profile'),update)
+router.route("/update/:userId").patch(upload.single('profilePicture'),update)
 export default router;

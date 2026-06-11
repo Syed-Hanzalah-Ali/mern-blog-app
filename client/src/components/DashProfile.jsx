@@ -1,15 +1,30 @@
-import { Alert, Button, TextInput } from 'flowbite-react';
+import { Alert, Button, Spinner, TextInput } from 'flowbite-react';
 import React, { useRef, useState } from 'react'
-import {useSelector} from "react-redux"
+import {useSelector,useDispatch} from "react-redux"
 import {HiInformationCircle} from "react-icons/hi"
+import { updateStart,updateSuccess,updateFailure } from '../redux/user/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashProfile() {
 
-  const {currentUser}=useSelector((state)=>state.user)
+  const {currentUser,loading,error}=useSelector((state)=>state.user)
   // console.log(currentUser);
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
 
   const [imageFile,setImageFile]=useState(null)
   const [imageURL,setImageURL]=useState(null)
+
+  const [updateSuccessMsg,setUpdateSuccessMsg]=useState(false)
+  // form data
+  const [formData,setFormData]=useState({
+    username:currentUser.username,
+    email:currentUser.email,
+    oldPassword:"",
+    newPassword:""
+  })
+  console.log("form data: ",formData);
+  
 
   const fileRef=useRef(null)
   // console.log(ref);
@@ -25,15 +40,61 @@ export default function DashProfile() {
     }
     
   }
-  // console.log(imageFile);
-  // console.log(imageFile,"    ",imageURL);
   
+  
+  function handleChange(e){
+    setFormData({...formData,[e.target.id]:e.target.value})
+  }
+  
+
+  async function handleSubmit(e){
+    e.preventDefault()
+    
+    try {
+      dispatch(updateStart())
+      setUpdateSuccessMsg(false)// to remove the success message
+      const form=new FormData()
+
+      form.append("username",formData.username)
+      form.append("email",formData.email)
+      form.append("newPassword",formData.newPassword)
+      form.append("oldPassword",formData.oldPassword)
+
+      if(imageFile){
+        console.log(imageFile);
+        
+        form.append("profilePicture",imageFile)
+      }
+
+      const response=await fetch(`/api/v1/users/update/${currentUser._id}`,
+        {
+          method:"PATCH",
+          body:form
+        }
+      )
+
+      const data=await response.json()
+
+
+      if(data.success===false){
+        dispatch(updateFailure(data.message))
+        return
+      }
+
+      dispatch(updateSuccess(data.data))
+      setUpdateSuccessMsg(true)
+
+    } 
+    catch (error) {
+      dispatch(updateFailure(error.message))
+    }
+  }
   
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
 
-      <form className='flex flex-col gap-4'>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
 
         <input hidden type="file" accept='image/*' ref={fileRef} onChange={handleImage}/>
 
@@ -55,6 +116,7 @@ export default function DashProfile() {
         placeholder='username'
         id='username'
         defaultValue={currentUser.username}
+        onChange={handleChange}
         />
 
         <TextInput
@@ -62,22 +124,34 @@ export default function DashProfile() {
         placeholder='email'
         id='email'
         defaultValue={currentUser.email}
+        onChange={handleChange}
         />
 
         <TextInput
         type='password'
         placeholder='new password'
         id='newPassword'
+        onChange={handleChange}
         />
 
         <TextInput
         type='password'
         placeholder='old password'
         id='oldPassword'
+        onChange={handleChange}
         />
 
-        <Button type='Submit' className="bg-gradient-to-br from-green-600 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
-          Update
+        <Button  type='Submit' className="bg-gradient-to-br from-green-600 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
+          {
+            loading?(
+            <>
+              <Spinner size="sm" aria-label="Info spinner example" className="me-3" light/>
+                <span className='pl-3'>Loading...</span>
+              
+            </>
+            )
+            :'Update'
+          }
         </Button>
 
       </form>
@@ -88,6 +162,9 @@ export default function DashProfile() {
         <span className='cursor-pointer'>Sign Out</span>
       </div>
 
+      {updateSuccessMsg&&<Alert className='mt-5' color='success'>User is updated successfully</Alert>}
+      
+      {error &&<Alert className='mt-5' color='failure'>{error}</Alert>}
     </div>
   )
 }

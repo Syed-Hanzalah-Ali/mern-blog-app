@@ -25,6 +25,9 @@ export const update=asyncHandler(async(req,res)=>{
 
     const existedUser=await User.findById(userId).select("+password")
 
+    if(!oldPassword){
+        throw new ApiError(401,"password is required to make any changes")
+    }
     const isAuthenticate=await existedUser.isPasswordCorrect(oldPassword)
 
     if(!isAuthenticate){
@@ -32,35 +35,43 @@ export const update=asyncHandler(async(req,res)=>{
     }
 
     let link=existedUser.profilePicture
+    console.log(req.file);
     if(req.file){
-
+        
         const deleted=await deleteFromCloudinary(existedUser.profilePicture)
         console.log(deleted);
         const response=await uploadOnCloudinary(req.file.path)
         link=response.url
     }
 
-    let password=oldPassword
+    // let password=oldPassword
     if(newPassword?.trim()!==""){
         console.log("got new Password");
         
-        password=await bcrypt.hash(newPassword,10);
+        // password=await bcrypt.hash(newPassword,10);
+        existedUser.password=newPassword
     }
-    const updatedUser=await User.findByIdAndUpdate(req.user._id,
-        {
-            $set:{
-                username,
-                email,
-                password,
-                profilePicture:link
+    // const updatedUser=await User.findByIdAndUpdate(req.user._id,
+    //     {
+    //         $set:{
+    //             username,
+    //             email,
+    //             password,
+    //             profilePicture:link
 
-            }
-        },
-        {returnDocument:"after"}
-    )
+    //         }
+    //     },
+    //     {returnDocument:"after"}
+    // )
+    existedUser.username=username
+    existedUser.email=email
+    existedUser.profilePicture=link
 
+    await existedUser.save()
+
+    existedUser.password=undefined
     return res.status(200).json(
-        new ApiResponse(200,updatedUser,"user is updated successfully")
+        new ApiResponse(200,existedUser,"user is updated successfully")
     )
     
 })
