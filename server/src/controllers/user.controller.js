@@ -75,3 +75,23 @@ export const update=asyncHandler(async(req,res)=>{
     )
     
 })
+
+export const deleteUser=asyncHandler(async(req,res)=>{
+    // console.log("deleting...");
+    
+    const {userId}=req.params
+
+    if(req.user._id!=userId){
+        throw new ApiError(403,"Dont have access to delete account, Unauthorized attempt")
+    }
+
+    const deletedUser=await User.findByIdAndDelete(req.user._id)
+
+    if(!deletedUser){
+        throw new ApiError(404,"user not found")
+    }
+
+    return res.clearCookie("accessToken").status(200).json(
+        new ApiResponse(200,{},"user has been deleted successfully")
+    )
+})
