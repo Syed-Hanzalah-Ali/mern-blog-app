@@ -84,12 +84,14 @@ export const deleteUser=asyncHandler(async(req,res)=>{
     if(req.user._id!=userId){
         throw new ApiError(403,"Dont have access to delete account, Unauthorized attempt")
     }
-
+    
     const deletedUser=await User.findByIdAndDelete(req.user._id)
-
+    
     if(!deletedUser){
         throw new ApiError(404,"user not found")
     }
+    const deleted=await deleteFromCloudinary(req.user.profilePicture)
+    console.log(deleted);
 
     return res.clearCookie("accessToken").status(200).json(
         new ApiResponse(200,{},"user has been deleted successfully")
