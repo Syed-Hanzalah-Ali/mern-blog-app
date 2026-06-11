@@ -109,3 +109,10 @@ export const google=asyncHandler(async(req,res)=>{
 
 
 })
+
+export const signout=asyncHandler(async(req,res)=>{
+
+    return res.clearCookie("accessToken").status(200).json(
+        new ApiResponse(200,{},"user signout successfully")
+    )
+})

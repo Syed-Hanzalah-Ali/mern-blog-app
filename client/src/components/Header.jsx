@@ -6,6 +6,7 @@ import {FaMoon, FaSun} from "react-icons/fa"
 import {useDispatch, useSelector} from "react-redux" 
 import {HiViewGrid,HiLogout} from "react-icons/hi"
 import { toogleTheme } from '../redux/theme/themeSlice.js'
+import { signoutSuccess } from '../redux/user/userSlice.js'
 
 
 export default function Header() {
@@ -17,6 +18,24 @@ export default function Header() {
 
     const {currentUser}=useSelector((state)=>state.user)
     console.log("user data: ",currentUser);
+
+    async function handleSignout(){
+        try {
+          const response=await fetch("/api/v1/auth/signout",{
+            method:"POST"
+          })
+          const data=await response.json()
+    
+          if(data.success===false){
+            console.log(data.message);
+            return
+          }
+          dispatch(signoutSuccess())
+        } catch (error) {
+          console.log(error);
+          
+        }
+      }
     
     
   return (
@@ -67,7 +86,7 @@ export default function Header() {
                             </Link>
 
                             <DropdownDivider />
-                            <DropdownItem icon={HiLogout}>Sign out</DropdownItem>
+                            <DropdownItem onClick={handleSignout} icon={HiLogout}>Sign out</DropdownItem>
 
                         </Dropdown>
                     ):

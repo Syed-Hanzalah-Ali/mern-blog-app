@@ -2,7 +2,7 @@ import { Alert, Button, Modal, ModalBody, ModalHeader, Spinner, TextInput } from
 import React, { useRef, useState } from 'react'
 import {useSelector,useDispatch} from "react-redux"
 import {HiInformationCircle,HiOutlineExclamationCircle} from "react-icons/hi"
-import { updateStart,updateSuccess,updateFailure,deleteStart,deleteSuccess,deleteFailure } from '../redux/user/userSlice';
+import { updateStart,updateSuccess,updateFailure,deleteStart,deleteSuccess,deleteFailure,signoutSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function DashProfile() {
@@ -118,6 +118,24 @@ export default function DashProfile() {
     }
     
   }
+
+  async function handleSignout(){
+    try {
+      const response=await fetch("/api/v1/auth/signout",{
+        method:"POST"
+      })
+      const data=await response.json()
+
+      if(data.success===false){
+        console.log(data.message);
+        return
+      }
+      dispatch(signoutSuccess())
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
   
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
@@ -188,7 +206,7 @@ export default function DashProfile() {
       {/* delete and signout buttons */}
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={()=>setOpenModal(true)} className='cursor-pointer'>Delete Account</span>
-        <span className='cursor-pointer'>Sign Out</span>
+        <span onClick={handleSignout} className='cursor-pointer'>Sign Out</span>
       </div>
 
       {updateSuccessMsg&&<Alert className='mt-5' color='success'>User is updated successfully</Alert>}
