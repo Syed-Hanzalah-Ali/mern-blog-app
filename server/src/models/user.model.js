@@ -25,6 +25,10 @@ const userSchema=new Schema({
     profilePicture:{
         type:String,
         default:"https://cdn-icons-png.flaticon.com/512/5580/5580909.png"
+    },
+    isAdmin:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 
@@ -44,7 +48,8 @@ userSchema.methods.generateAccessToken=function(){
     return jwt.sign(
         {
             _id:this._id,
-            username:this.username
+            username:this.username,
+            isAdmin:this.isAdmin
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
