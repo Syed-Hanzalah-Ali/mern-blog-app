@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
+    "@tiptap/extension-text-align": "^3.26.1",
+    "@tiptap/react": "^3.26.1",
+    "@tiptap/starter-kit": "^3.26.1",
     "firebase": "^12.14.0",
     "flowbite-react": "^0.12.17",
     "react": "^19.2.6",

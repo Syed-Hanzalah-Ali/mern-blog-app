@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react'
 import {useSelector,useDispatch} from "react-redux"
 import {HiInformationCircle,HiOutlineExclamationCircle} from "react-icons/hi"
 import { updateStart,updateSuccess,updateFailure,deleteStart,deleteSuccess,deleteFailure,signoutSuccess } from '../redux/user/userSlice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function DashProfile() {
 
@@ -188,7 +188,7 @@ export default function DashProfile() {
         onChange={handleChange}
         />
 
-        <Button  type='Submit' className="bg-gradient-to-br from-green-600 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
+        <Button disabled={loading} type='Submit' className="bg-gradient-to-br from-green-600 to-blue-600 text-white hover:bg-gradient-to-bl focus:ring-green-200 dark:focus:ring-green-800">
           {
             loading?(
             <>
@@ -200,6 +200,16 @@ export default function DashProfile() {
             :'Update'
           }
         </Button>
+
+        {
+          currentUser.isAdmin&&(
+            <Link to="/create-post">
+              <Button type='button' className='w-full' outline>
+                Create a post
+              </Button>
+            </Link>
+          )
+        }
 
       </form>
 
