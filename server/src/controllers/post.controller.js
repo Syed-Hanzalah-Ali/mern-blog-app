@@ -45,10 +45,12 @@ export const getPosts=asyncHandler(async(req,res)=>{
     const order=req.query.order==='asc'?1:-1
 
     const {userId,postId,search,category,slug}=req.query
+    console.log(req.query);
+    
 
     const matchStage={
-        ...(userId&&{author:userId}),
-        ...(postId&&{_id:postId}),
+        ...(userId&&{author:new mongoose.Types.ObjectId(userId)}),
+        ...(postId&&{_id:new mongoose.Types.ObjectId(postId)}),
         ...(category&&{category}),
         ...(slug&&{slug}),
         ...(search && {

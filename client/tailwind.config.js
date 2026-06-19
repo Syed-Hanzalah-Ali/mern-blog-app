@@ -25,6 +25,6 @@ export default {
       },
     },
   },
-  plugins: [require('flowbite-react/plugin')],
+  plugins: [require('flowbite-react/plugin'),require('tailwind-scrollbar')],
 }
 
