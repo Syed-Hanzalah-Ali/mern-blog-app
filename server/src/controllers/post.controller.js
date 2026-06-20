@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Post } from "../models/post.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 
 export const createPost=asyncHandler(async(req,res)=>{
@@ -102,4 +102,28 @@ export const getPosts=asyncHandler(async(req,res)=>{
     return res.status(200).json(
         new ApiResponse(200,{posts,totalPosts,lastMonthTotalPost},"post fetched successfully")
     );
+})
+
+export const deletePost=asyncHandler(async(req,res)=>{
+    const {userId,postId}=req.params
+    if(req.user._id!=userId){
+        throw new ApiError(401,"unauthorized attempt")
+    }
+    if(!req.user.isAdmin){
+        throw new ApiError(403,"only admin can delete this post")
+    }
+
+    const post=await Post.findOne({
+        _id:postId,
+        author:userId
+    })
+
+    const result=await deleteFromCloudinary(post.image)
+    // console.log(result);
+    
+
+    await post.deleteOne()
+    return res.status(200).json(
+        new ApiResponse(200,{},"post deleted successfully")
+    )
 })
