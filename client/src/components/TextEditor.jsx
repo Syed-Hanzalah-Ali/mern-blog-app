@@ -2,9 +2,10 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
+import { useEffect } from 'react'
 
 
-export default function TextEditor({onChange}) {
+export default function TextEditor({content,onChange}) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -16,12 +17,18 @@ export default function TextEditor({onChange}) {
       }),
     ],
     
-    content: '',
+    content: content || '',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     
   })
+
+  useEffect(() => {
+    if (editor && content) {
+      editor.commands.setContent(content)
+    }
+  }, [editor, content])
 
   // console.log("editor: ",editor.getHTML());
   

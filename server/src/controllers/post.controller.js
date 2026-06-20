@@ -127,3 +127,47 @@ export const deletePost=asyncHandler(async(req,res)=>{
         new ApiResponse(200,{},"post deleted successfully")
     )
 })
+
+export const UpdatePost=asyncHandler(async(req,res)=>{
+    const {userId,postId}=req.params
+    
+    if(req.user._id!=userId){
+        throw new ApiError(401,"unauthorized attempt")
+    }
+    if(!req.user.isAdmin){
+        throw new ApiError(403,"Unauthorized attemp - only admin can make a post")
+    }
+
+    const {title,content,category}=req.body;
+    // console.log(req.body);
+    
+    if(!title?.trim() || !content?.trim()){
+        throw new ApiError(400,"Title and content cannot be empty")
+    }
+    // console.log(req.body);
+
+    const post=await Post.findById(postId)
+    
+    let link=post.image
+    if(req.file){
+        console.log(req.file);
+        await deleteFromCloudinary(post.image)
+        const result=await uploadOnCloudinary(req.file?.path)
+        
+        link=result?.url        
+    }
+
+    const updatedPost=await Post.findByIdAndUpdate(postId,{
+        $set:{
+            title:title,
+            content:content,
+            category:category,
+            image:link
+        }
+    },{returnDocument:"after"}
+    )
+
+    return res.status(201).json(
+        new ApiResponse(200,updatedPost,"new post created successfully")
+    )
+})
