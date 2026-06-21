@@ -97,3 +97,36 @@ export const deleteUser=asyncHandler(async(req,res)=>{
         new ApiResponse(200,{},"user has been deleted successfully")
     )
 })
+
+export const getUsers=asyncHandler(async(req,res)=>{
+    if(!req.user.isAdmin){
+        throw new ApiError(403,"unauthorized attempt - only admin can see all the users")
+    }
+
+    const startIndex=parseInt(req.query.startIndex) ||0
+    const limit=parseInt(req.query.limit)||9
+    const order=req.query.order==='asc'?1:-1
+
+    const users=await User.find()
+    .sort({createdAt:order})
+    .skip(startIndex)
+    .limit(limit)
+
+    const totalUsers=await User.countDocuments()
+
+    const now=new Date()
+    const oneMonthAgo=new Date(
+        now.getFullYear(),
+        now.getMonth()-1,
+        now.getDate()
+    )
+
+    const lastMonthUsers=await User.countDocuments({
+        createdAt:{$gte:oneMonthAgo}
+    })
+
+    return res.status(200).json(
+        new ApiResponse(200,{users,totalUsers,lastMonthUsers},"users are fetched sucessfully")
+    )
+
+})
