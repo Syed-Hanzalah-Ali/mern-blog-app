@@ -80,12 +80,12 @@ export const deleteUser=asyncHandler(async(req,res)=>{
     // console.log("deleting...");
     
     const {userId}=req.params
-
+    
     if(req.user._id!=userId){
         throw new ApiError(403,"Dont have access to delete account, Unauthorized attempt")
     }
     
-    const deletedUser=await User.findByIdAndDelete(req.user._id)
+    const deletedUser=await User.findByIdAndDelete(userId)
     
     if(!deletedUser){
         throw new ApiError(404,"user not found")
@@ -129,4 +129,26 @@ export const getUsers=asyncHandler(async(req,res)=>{
         new ApiResponse(200,{users,totalUsers,lastMonthUsers},"users are fetched sucessfully")
     )
 
+})
+
+export const deleteUsersByAdmin=asyncHandler(async(req,res)=>{
+    // console.log("deleting...");
+    
+    const {userId}=req.params
+    
+    if(!req.user.isAdmin){
+        throw new ApiError(403,"Dont have access to delete account, Unauthorized attempt")
+    }
+    
+    const deletedUser=await User.findByIdAndDelete(userId)
+    
+    if(!deletedUser){
+        throw new ApiError(404,"user not found")
+    }
+    const deleted=await deleteFromCloudinary(deletedUser.profilePicture)
+    console.log(deleted);
+
+    return res.status(200).json(
+        new ApiResponse(200,{},"user has been deleted successfully")
+    )
 })
