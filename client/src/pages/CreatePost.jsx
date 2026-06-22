@@ -35,15 +35,15 @@ export default function CreatePost() {
                 body:form
             })
     
-            const data=await response.json()
+            const result=await response.json()
             
-            if(data.success===false){
+            if(result.success===false){
                 setPublishError(data.message)
                 return
             }
-            console.log(data);
+            // console.log(data);
             setPublishError(null)
-            navigate(`/post/${data.data.slug}`)
+            navigate(`/post/${result.data._id}`)
 
         } catch (error) {
             setPublishError(error.message)

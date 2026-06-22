@@ -18,3 +18,13 @@
   height: 0;
   pointer-events: none;
 }
+
+.post-content p{
+  margin-bottom: 0.5rem;
+}
+
+.post-content h1{
+  font-size: 1.4rem;
+  font-family: sans-serif;
+  margin: 1.5rem 0;
+}

@@ -92,7 +92,7 @@ export default function TextEditor({content,onChange}) {
 
       </div>
 
-      <EditorContent editor={editor} placeholder='write' className='tiptap h-72 mb-6 border-2 p-5 text-xl'/>
+      <EditorContent editor={editor} placeholder='write' className='tiptap min-h-72 mb-6 border-2 p-5 text-xl'/>
     </div>
   )
 }
