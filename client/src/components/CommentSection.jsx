@@ -1,7 +1,8 @@
 import { Alert, Button, Textarea, TextInput } from 'flowbite-react';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {useSelector} from "react-redux"
 import { Link } from 'react-router-dom';
+import Comment from './Comment';
 export default function CommentSection({postId}) {
     console.log(postId);
 
@@ -10,6 +11,7 @@ export default function CommentSection({postId}) {
     const [comment,setComment]=useState('')
     const [commentError,setCommentError]=useState(null)
     const [loading,setLoading]=useState(false)
+    const [postComments,setPostComments]=useState([])
 
     async function handleCommentSubmit(e){
         e.preventDefault()
@@ -26,14 +28,16 @@ export default function CommentSection({postId}) {
             })
     
             const result=await response.json()
-            if(result.success===false){
-                setCommentError(result.message)
+            if(result.success===true){
+                // console.log("new: ",result.data);
+                
+                setComment('')
+                setPostComments([result.data[0],...postComments])
                 setLoading(false)
-                return
+                setCommentError(null)
             }
-
-            setLoading(false)
-            setCommentError(null)
+            
+            
 
         } catch (error) {
             // console.log(error.message);
@@ -43,6 +47,29 @@ export default function CommentSection({postId}) {
         }
         
     }
+
+    useEffect(()=>{
+        if(!postId){return}
+        async function fetchPostComment(){
+            try {
+                const response=await fetch(`/api/v1/comments/getPostComments/${postId}`)
+                const result=await response.json()
+    
+                if(result.success===true){
+                    // console.log(result.message);
+                    setPostComments(result.data)
+                }
+            } catch (error) {
+                console.log(error.message);
+                
+            }
+            // console.log(result.data);
+            
+        }
+
+        fetchPostComment()
+    },[postId])
+    // console.log(postComments);
     
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -88,8 +115,27 @@ export default function CommentSection({postId}) {
                     }
                 </form>
 
-            )
-        }
+                )}
+                {
+                    postComments.length===0?(
+                        <p className='text-sm my-5'>No comments yet!</p>
+                    )
+                    :(
+                        <>
+                            <div className='text-sm my-5 flex items-center gap-1'>
+                                <p>Comments</p>
+                                <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+                                    <p>{postComments.length}</p>
+                                </div>
+                            </div>
+                            {postComments.map((postComment,index)=>{
+                                return(
+                                    <Comment comment={postComment} key={postComment._id}/>
+                                )
+                            })}
+                        </>
+                )
+                }
     </div>
   )
 }
