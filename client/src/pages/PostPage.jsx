@@ -2,6 +2,7 @@ import { Button, Spinner } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import AddCallToAction from '../components/AddCallToAction'
+import CommentSection from '../components/CommentSection'
 
 export default function PostPage() {
 
@@ -75,6 +76,8 @@ export default function PostPage() {
                 <div className='max-w-4xl mx-auto w-full'>
                     <AddCallToAction/>
                 </div>
+
+                <CommentSection postId={post&&post._id}/>
             </>
         )}
     </main>
