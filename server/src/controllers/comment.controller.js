@@ -118,3 +118,50 @@ export const getPostComments = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, postComments, "comments fetched successfully"));
 });
+
+export const likeComment=asyncHandler(async(req,res)=>{
+
+  const {commentId}=req.params
+
+  const comment=await Comment.findById(commentId)
+  console.log(comment);
+  
+  if(!comment){
+    throw new ApiError(404,"comment not found")
+  }
+
+  const isLiked=comment.likeBy.indexOf(req.user._id)
+  // const isLiked=await Comment.findOne({
+  //   _id:commentId,
+  //   likeBy:{$in:[req.user._id]}
+  // })
+
+  if(isLiked===-1){
+    const commentLiked=await Comment.findByIdAndUpdate(commentId,
+      {
+        $addToSet:{
+          likeBy:req.user._id
+        }
+      },
+      {returnDocument:'after'}
+    )
+    return res.status(200).json(
+      new ApiResponse(200,commentLiked,"user Liked the comment")
+    )
+    
+  }
+  const commentUnliked=await Comment.findByIdAndUpdate(commentId,
+    {
+      $pull:{
+        likeBy:req.user._id
+      }
+    },
+    {returnDocument:'after'}
+  )
+
+  return res.status(200).json(
+      new ApiResponse(200,commentUnliked,"user unLiked the comment")
+    )
+
+
+})

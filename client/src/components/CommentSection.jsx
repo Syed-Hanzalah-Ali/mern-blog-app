@@ -1,12 +1,13 @@
 import { Alert, Button, Textarea, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react'
 import {useSelector} from "react-redux"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Comment from './Comment';
 export default function CommentSection({postId}) {
-    console.log(postId);
+    // console.log(postId);
 
     const {currentUser}=useSelector((state)=>state.user)
+    const navigate=useNavigate()
 
     const [comment,setComment]=useState('')
     const [commentError,setCommentError]=useState(null)
@@ -56,8 +57,8 @@ export default function CommentSection({postId}) {
                 const result=await response.json()
     
                 if(result.success===true){
-                    // console.log(result.message);
-                    setPostComments(result.data)
+                    // console.log("all comments: ",result.data);
+                    setPostComments(result.data.map((c)=>({...c,noOfLikes:c.likeBy.length})))
                 }
             } catch (error) {
                 console.log(error.message);
@@ -70,6 +71,29 @@ export default function CommentSection({postId}) {
         fetchPostComment()
     },[postId])
     // console.log(postComments);
+
+    async function handleLike(commentId){
+            if(!currentUser){
+                navigate('/sign-in')
+            }
+            try {
+                const response=await fetch(`/api/v1/comments/likeComment/${commentId}`,{
+                    method:'PUT'
+                })
+                const result=await response.json()
+                if(result.success===true){
+                    // console.log(result.data);
+                    // console.log(postComments);
+
+                    setPostComments((prev)=>prev.map((p)=>p._id===result.data._id?{...p,likeBy:result.data.likeBy,noOfLikes: result.data.likeBy.length}:p))
+                    
+                    
+                }
+            } catch (error) {
+                console.log(error.message);
+                
+            }
+    }
     
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -130,7 +154,7 @@ export default function CommentSection({postId}) {
                             </div>
                             {postComments.map((postComment,index)=>{
                                 return(
-                                    <Comment comment={postComment} key={postComment._id}/>
+                                    <Comment onLike={handleLike} comment={postComment} key={postComment._id}/>
                                 )
                             })}
                         </>
