@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import moment from "moment"
 import {FaThumbsUp} from "react-icons/fa"
+import {HiOutlineExclamationCircle} from "react-icons/hi"
 import {useSelector} from "react-redux"
-import {Button, Textarea} from "flowbite-react"
+import {Button, Textarea,Modal,ModalHeader,ModalBody} from "flowbite-react"
 
-export default function Comment({comment,onLike,onEdit}) {
+export default function Comment({comment,onLike,onEdit,onDelete}) {
     const {currentUser}=useSelector((state)=>state.user)
 
     const [isEditing,setIsEditing]=useState(false)
     const [editedCommentContent,setEditedCommentContent]=useState()
+    const [openModal, setOpenModal] = useState(false);
     
     
     async function handleEdit(){
         setIsEditing(true)
         setEditedCommentContent(comment.content)
     }
-    console.log(editedCommentContent);
+    // console.log(editedCommentContent);
 
-    function handleSave(){
-        onEdit(comment._id,editedCommentContent)
+    async function handleSave(){
+        await onEdit(comment._id,editedCommentContent)
         setIsEditing(false)
+    }
+
+    async function handleDelete(){
+        await onDelete(comment._id)
+        setOpenModal(false)
     }
     
   return (
@@ -73,9 +80,16 @@ export default function Comment({comment,onLike,onEdit}) {
                         
                             {
                                 currentUser&&(comment.WroteBy._id===currentUser._id || currentUser.isAdmin)&&(
-                                    <button onClick={handleEdit} className='text-gray-400 hover:text-blue-500'>
-                                        Edit
-                                    </button>
+                                    <>
+                                        <button type='button' onClick={handleEdit} className='text-gray-400 hover:text-blue-500'>
+                                            Edit
+                                        </button>
+
+                                        <button type='button' onClick={()=>setOpenModal(true)} className='text-gray-400 hover:text-red-500'>
+                                            Delete
+                                        </button>
+
+                                    </>
                                 )
                             }
                         </div>
@@ -84,6 +98,27 @@ export default function Comment({comment,onLike,onEdit}) {
                 ) 
             }
         </div>
+
+        <Modal show={openModal} size='md' onClose={()=>setOpenModal(false)} popup>
+            <ModalHeader/>
+            <ModalBody>
+                
+                <div className="text-center">
+                <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                    Are you sure you want to delete this comment?
+                </h3>
+                <div className="flex justify-center gap-4">
+                    <Button color="red" onClick={handleDelete}>
+                    Yes, I'm sure
+                    </Button>
+                    <Button color="alternative" onClick={() => setOpenModal(false)}>
+                    No, cancel
+                    </Button>
+                </div>
+                </div>
+            </ModalBody>
+        </Modal>
 
     </div>
   )

@@ -121,6 +121,29 @@ export default function CommentSection({postId}) {
             
         }
     }
+
+    async function handleDelete(commentId){
+        if(!currentUser){
+            navigate('/sign-in')
+        }
+        try {
+            const response=await fetch(`/api/v1/comments/deleteComment/${commentId}`,{
+                method:'DELETE'
+            })
+            const result=await response.json()
+            if(result.success===true){
+                // console.log(result.data);
+                // console.log(postComments);
+
+                setPostComments((prev)=>prev.filter((p)=>p._id!==commentId))
+                
+                
+            }
+        } catch (error) {
+            console.log(error.message);
+            
+        }
+    }
     
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -182,7 +205,7 @@ export default function CommentSection({postId}) {
                             {postComments.map((postComment,index)=>{
                                 // comment component
                                 return(
-                                    <Comment onLike={handleLike} onEdit={handleEdit} comment={postComment} key={postComment._id}/>
+                                    <Comment onLike={handleLike} onEdit={handleEdit} onDelete={handleDelete} comment={postComment} key={postComment._id}/>
                                 )
                             })}
                         </>

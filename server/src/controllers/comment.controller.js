@@ -175,7 +175,7 @@ export const editComment=asyncHandler(async(req,res)=>{
   }
   // console.log(comment.wroteBy," ",req.user._id);
   
-  if(comment.wroteBy.toString()!==req.user._id.toString()){
+  if(comment.wroteBy.toString()!==req.user._id.toString() && !req.user.isAdmin){
     throw new ApiError(403,"unauthorized attempt - you cannot edit this comment")
   }
 
@@ -194,4 +194,26 @@ export const editComment=asyncHandler(async(req,res)=>{
     new ApiResponse(200,editedComment,"comment is edited successfully")
   )
 
+})
+
+export const deleteComment=asyncHandler(async(req,res)=>{
+  const {commentId}=req.params;
+
+  const comment=await Comment.findById(commentId)
+  if(!comment){
+    throw new ApiError(404,"comment not found")
+  }
+  // console.log(comment.wroteBy," ",req.user._id);
+
+
+  
+  if(comment.wroteBy.toString()!==req.user._id.toString() && !req.user.isAdmin){
+    throw new ApiError(403,"unauthorized attempt - you cannot edit this comment")
+  }
+
+
+  const deletedComment=await Comment.findByIdAndDelete(commentId)
+  return res.status(200).json(
+    new ApiResponse(200,{},"comment is edited successfully")
+  )
 })
