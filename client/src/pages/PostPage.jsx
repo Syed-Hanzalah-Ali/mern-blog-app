@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import AddCallToAction from '../components/AddCallToAction'
 import CommentSection from '../components/CommentSection'
+import PostCard from '../components/PostCard'
 
 export default function PostPage() {
 
@@ -11,6 +12,7 @@ export default function PostPage() {
     const [loading,setLoading]=useState(false)
     const [error,setError]=useState(null)
     const [post,setPost]=useState(null)
+    const [recentPosts,setRecentPosts]=useState(null)
 
     useEffect(()=>{
         async function getPost(){
@@ -41,7 +43,36 @@ export default function PostPage() {
 
         getPost()
     },[postId])
-    console.log(post);
+    // console.log(post);
+
+    // get recent post
+    useEffect(()=>{
+        async function getRecentPost(){
+            try {
+                
+                const response=await fetch(`/api/v1/posts/getposts?limit=3`)
+                const result=await response.json()
+
+                if(result.success===true){
+                    
+                    // console.log("recent posts ",result.data);
+                    setRecentPosts(result.data.posts)
+                    
+                }
+                
+                
+            } 
+            catch (error) {
+                
+
+                console.log(error.message);
+                    
+            }
+        }
+
+        getRecentPost()
+    },[postId])
+    // console.log(recentPosts);
     
   return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
@@ -78,6 +109,21 @@ export default function PostPage() {
                 </div>
 
                 <CommentSection postId={post&&post._id}/>
+
+                <div className='flex flex-col justify-center items-center mb-5'>
+                    <h1 className='text-xl mt-5'>Recent articles</h1>
+                    <div className='flex flex-wrap gap-5 mt-5 justify-center'>
+                        {
+                            recentPosts&&(
+                                recentPosts.map((recentPost)=>{
+                                    return(
+                                        <PostCard key={recentPost._id} post={recentPost}/>
+                                    )
+                                })
+                            )
+                        }
+                    </div>
+                </div>
             </>
         )}
     </main>
