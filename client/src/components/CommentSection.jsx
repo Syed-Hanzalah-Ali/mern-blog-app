@@ -94,6 +94,33 @@ export default function CommentSection({postId}) {
                 
             }
     }
+
+    async function handleEdit(commentId,editedCommentContent){
+        if(!currentUser){
+            navigate('/sign-in')
+        }
+        try {
+            const response=await fetch(`/api/v1/comments/editComment/${commentId}`,{
+                method:'PUT',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({content:editedCommentContent})
+            })
+            const result=await response.json()
+            if(result.success===true){
+                // console.log(result.data);
+                // console.log(postComments);
+
+                setPostComments((prev)=>prev.map((p)=>p._id===result.data._id?{...p,content:result.data.content}:p))
+                
+                
+            }
+        } catch (error) {
+            console.log(error.message);
+            
+        }
+    }
     
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -153,8 +180,9 @@ export default function CommentSection({postId}) {
                                 </div>
                             </div>
                             {postComments.map((postComment,index)=>{
+                                // comment component
                                 return(
-                                    <Comment onLike={handleLike} comment={postComment} key={postComment._id}/>
+                                    <Comment onLike={handleLike} onEdit={handleEdit} comment={postComment} key={postComment._id}/>
                                 )
                             })}
                         </>
