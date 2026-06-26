@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createComment, deleteComment, editComment, getPostComments, likeComment } from "../controllers/comment.controller.js";
+import { createComment, deleteComment, editComment, getComments, getPostComments, likeComment } from "../controllers/comment.controller.js";
 
 const router=Router()
 
@@ -15,5 +15,7 @@ router.route("/likeComment/:commentId").put(verifyJWT,likeComment)
 router.route("/editComment/:commentId").put(verifyJWT,editComment)
 
 router.route("/deleteComment/:commentId").delete(verifyJWT,deleteComment)
+
+router.route("/getComments").get(verifyJWT,getComments)
 
 export default router
