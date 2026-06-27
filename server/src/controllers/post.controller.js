@@ -42,10 +42,10 @@ export const createPost=asyncHandler(async(req,res)=>{
 export const getPosts=asyncHandler(async(req,res)=>{
     const startIndex=parseInt(req.query.startIndex) ||0
     const limit=parseInt(req.query.limit)||9
-    const order=req.query.order==='asc'?1:-1
+    const order=req.query.sort==='asc'?1:-1
 
     const {userId,postId,search,category,slug}=req.query
-    console.log(req.query);
+    console.log(Date.now(),req.query);
     
 
     const matchStage={

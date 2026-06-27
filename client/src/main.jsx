@@ -20,6 +20,7 @@ import AdminRoute from './components/AdminRoute.jsx'
 import CreatePost from './pages/CreatePost.jsx'
 import UpdatePost from './pages/UpdatePost.jsx'
 import PostPage from './pages/PostPage.jsx'
+import Search from './pages/Search.jsx'
 
 const router=createBrowserRouter([
   {
@@ -75,6 +76,10 @@ const router=createBrowserRouter([
       {
         path:"post/:postId",
         element:<PostPage/>
+      },
+      {
+        path:"search",
+        element:<Search/>
       }
     ]
   }
