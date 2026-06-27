@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import {AiOutlineSearch} from "react-icons/ai"
 import {FaMoon, FaSun} from "react-icons/fa"
 import {useDispatch, useSelector} from "react-redux" 
-import {HiViewGrid,HiLogout} from "react-icons/hi"
+import {HiViewGrid,HiLogout, HiUser} from "react-icons/hi"
 import { toogleTheme } from '../redux/theme/themeSlice.js'
 import { signoutSuccess } from '../redux/user/userSlice.js'
 
@@ -82,7 +82,7 @@ export default function Header() {
                             </DropdownHeader>
 
                             <Link to="/dashboard?tab=profile">
-                                <DropdownItem icon={HiViewGrid}>Profile</DropdownItem>
+                                <DropdownItem icon={HiUser}>Profile</DropdownItem>
                             </Link>
 
                             <DropdownDivider />
