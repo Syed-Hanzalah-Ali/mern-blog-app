@@ -14,7 +14,7 @@ export const createPost=asyncHandler(async(req,res)=>{
     if(!title?.trim() || !content?.trim()){
         throw new ApiError(400,"Title and content cannot be empty")
     }
-    console.log(req.body);
+    // console.log(req.body);
     
     let link=''
     if(req.file){
@@ -45,7 +45,7 @@ export const getPosts=asyncHandler(async(req,res)=>{
     const order=req.query.sort==='asc'?1:-1
 
     const {userId,postId,search,category,slug}=req.query
-    console.log(Date.now(),req.query);
+    // console.log(Date.now(),req.query);
     
 
     const matchStage={

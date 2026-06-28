@@ -26,7 +26,7 @@ export default function SignIn() {
     // console.log(formData);
   
     async function handleSubmit(e){
-      console.log(formData);
+      // console.log(formData);
       
       e.preventDefault()
   
@@ -44,7 +44,7 @@ export default function SignIn() {
         })
 
         const data=await response.json()
-        console.log(data);
+        // console.log(data);
         if(data.success===false){
           // setLoading(false)
           // setErrorMessage(data.message)

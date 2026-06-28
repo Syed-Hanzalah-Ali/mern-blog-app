@@ -6,7 +6,7 @@ import {useSelector} from "react-redux"
 // now to render the main router we have to accept it as children
 export default function ({children}) {
     const {theme}=useSelector((state)=>state.theme)
-    console.log("theme is: ",theme);
+    // console.log("theme is: ",theme);
     
   return (
     <div className={theme}>

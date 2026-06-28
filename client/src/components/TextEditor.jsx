@@ -1,9 +1,10 @@
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useEffect } from 'react'
-
+import { FaAlignCenter, FaAlignLeft, FaAlignRight, FaBold, FaHeading, FaItalic, FaLink, FaUnderline } from "react-icons/fa"
+import Link from '@tiptap/extension-link';
 
 export default function TextEditor({content,onChange}) {
   const editor = useEditor({
@@ -15,6 +16,11 @@ export default function TextEditor({content,onChange}) {
       Placeholder.configure({
         placeholder: 'Start writing...',
       }),
+      Link.configure({
+        openOnClick: false, // Don't navigate when clicking links in the editor
+        autolink: true,
+        defaultProtocol: 'https',
+      }),
     ],
     
     content: content || '',
@@ -22,6 +28,19 @@ export default function TextEditor({content,onChange}) {
       onChange(editor.getHTML());
     },
     
+  })
+
+  const editorState=useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+    isBold: editor.isActive('bold'),
+    isItalic: editor.isActive('italic'),
+    isH1: editor.isActive('heading', { level: 1 }),
+    isUnderline: editor.isActive('underline'),
+    isLeft: editor.isActive({ textAlign: 'left' }),
+    isCenter: editor.isActive({ textAlign: 'center' }),
+    isRight: editor.isActive({ textAlign: 'right' }),
+  }),
   })
 
   useEffect(() => {
@@ -38,56 +57,74 @@ export default function TextEditor({content,onChange}) {
   return (
     <div>
       <div className="mb-2 flex gap-5 border px-5" >
-        <button type='button' className='font-bold' 
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isBold ? "bg-blue-500 text-white" : ""}`} 
           onClick={() => editor.chain().focus().toggleBold().run()}
         >
-          B
+          <FaBold/>
         </button>
 
-        <button type='button' className=' italic'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isItalic ? "bg-blue-500 text-white" : ""}`}
           onClick={() => editor.chain().focus().toggleItalic().run()}
         >
-          I
+          <FaItalic/>
         </button>
 
-        <button type='button' className='font-bold'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isH1 ? "bg-blue-500 text-white" : ""}`}
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
         >
-          H1
+          <FaHeading/>
         </button>
 
-        <button type='button' className=' underline'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isUnderline ? "bg-blue-500 text-white" : ""}`}
           onClick={() =>
             editor.chain().focus().toggleUnderline({ level: 1 }).run()
           }
         >
-          U
+          <FaUnderline/>
         </button>
 
-        <button type='button' className='font-bold underline'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isLeft ? "bg-blue-500 text-white" : ""}`}
           onClick={() =>
             editor.chain().focus().setTextAlign('left').run()
           }
         >
-          left
+          <FaAlignLeft/>
         </button>
 
-        <button type='button' className='font-bold underline'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isCenter ? "bg-blue-500 text-white" : ""}`}
           onClick={() =>
             editor.chain().focus().setTextAlign('center').run()
           }
         >
-          center
+          <FaAlignCenter/>
         </button>
 
-        <button type='button' className='font-bold underline'
+        <button type='button' className={`px-2 py-1 rounded ${editorState.isRight ? "bg-blue-500 text-white" : ""}`}
           onClick={() =>
             editor.chain().focus().setTextAlign('right').run()
           }
         >
-          right
+          <FaAlignRight/>
+        </button>
+
+        <button type="button" className={`p-2 rounded ${editor.isActive('link') ? "bg-blue-500 text-white" : ""}`}
+        onClick={() => {
+        const previousUrl = editor.getAttributes('link').href;
+        const url = window.prompt('Enter URL', previousUrl);
+
+        if (url === null) return;
+
+        if (url === '') {
+          editor.chain().focus().unsetLink().run();
+          return;
+        }
+
+        editor.chain().focus().setLink({ href: url }).run();
+        }}
+        >
+          <FaLink/>
         </button>
 
       </div>

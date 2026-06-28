@@ -20,7 +20,7 @@ export default function SignUp() {
   // console.log(formData);
 
   async function handleSubmit(e){
-    console.log(formData);
+    // console.log(formData);
     
     e.preventDefault()
 
@@ -35,7 +35,7 @@ export default function SignUp() {
         body:JSON.stringify(formData)
       })
       const data=await response.json()
-      console.log(data);
+      // console.log(data);
       if(data.success===false){
         // console.log("y",errorMessage);
         setLoading(false)
@@ -51,7 +51,7 @@ export default function SignUp() {
     }
     
   }
-  console.log(errorMessage);
+  // console.log(errorMessage);
   
   
   return (

@@ -35,7 +35,7 @@ export const update=asyncHandler(async(req,res)=>{
     }
 
     let link=existedUser.profilePicture
-    console.log(req.file);
+    // console.log(req.file);
     if(req.file){
         
         const deleted=await deleteFromCloudinary(existedUser.profilePicture)
@@ -146,7 +146,7 @@ export const deleteUsersByAdmin=asyncHandler(async(req,res)=>{
         throw new ApiError(404,"user not found")
     }
     const deleted=await deleteFromCloudinary(deletedUser.profilePicture)
-    console.log(deleted);
+    // console.log(deleted);
 
     return res.status(200).json(
         new ApiResponse(200,{},"user has been deleted successfully")

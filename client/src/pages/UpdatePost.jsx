@@ -16,7 +16,7 @@ export default function UpdatePost() {
     const navigate=useNavigate()
 
     const {postId}=useParams()
-    console.log(postId);
+    // console.log(postId);
 
     useEffect(()=>{
 
@@ -27,18 +27,18 @@ export default function UpdatePost() {
                 
                 if(result.success===true){
                     setPublishError(null)
-                    console.log(result.data.posts[0]);
+                    // console.log(result.data.posts[0]);
                     setFormData(result.data.posts[0])
                     
                 }
                 else{
-                    console.log(result.message);
+                    // console.log(result.message);
                     setPublishError(result.message)
                     
                 }
             } 
             catch (error) {
-                console.log(error.message);
+                // console.log(error.message);
                 setPublishError(error.message)
                 
             }

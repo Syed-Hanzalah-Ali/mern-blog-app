@@ -78,7 +78,7 @@ export const google=asyncHandler(async(req,res)=>{
     // check whether user already signIn before or not
     const existedUser=await User.findOne({email})
     if(existedUser){
-        console.log("user already exist");
+        // console.log("user already exist");
         
         const token=existedUser.generateAccessToken();
         

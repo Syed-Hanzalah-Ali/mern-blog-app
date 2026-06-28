@@ -70,10 +70,10 @@ export const createComment = asyncHandler(async (req, res) => {
 });
 
 export const getPostComments = asyncHandler(async (req, res) => {
-  console.log("getting all comments..");
+  // console.log("getting all comments..");
 
   const { postId } = req.params;
-  console.log(mongoose.isValidObjectId(postId));
+  // console.log(mongoose.isValidObjectId(postId));
 
   const postComments = await Comment.aggregate([
     {
@@ -124,7 +124,7 @@ export const likeComment=asyncHandler(async(req,res)=>{
   const {commentId}=req.params
 
   const comment=await Comment.findById(commentId)
-  console.log(comment);
+  // console.log(comment);
   
   if(!comment){
     throw new ApiError(404,"comment not found")

@@ -28,3 +28,12 @@
   font-family: sans-serif;
   margin: 1.5rem 0;
 }
+
+.post-content a {
+  color: #2563eb; /* blue-600 */
+  text-decoration: underline;
+}
+
+.post-content a:hover {
+  color: #1d4ed8; /* blue-700 */
+}
